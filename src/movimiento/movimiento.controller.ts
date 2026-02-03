@@ -31,6 +31,11 @@ export class MovimientoController {
     return this.movimientoService.findById(id);
   }
 
+  @Get('inventario/:inventarioId')
+  findByInventario(@Param('inventarioId') inventarioId: string): Promise<Movimiento[]> {
+    return this.movimientoService.findByInventario(inventarioId);
+  }
+
   @Put(':id')
   update(@Param('id') id: string, @Body() updateMovimientoDto: UpdateMovimientoDto): Promise<Movimiento | null> {
     return this.movimientoService.update(id, updateMovimientoDto);

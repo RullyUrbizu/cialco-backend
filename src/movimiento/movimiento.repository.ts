@@ -4,7 +4,7 @@ import { Movimiento } from 'src/modelo/movimiento';
 
 @Injectable()
 export class MovimientoRepository {
-  constructor(@InjectModel(Movimiento) private readonly movimientoModel: typeof Movimiento) {}
+  constructor(@InjectModel(Movimiento) private readonly movimientoModel: typeof Movimiento) { }
 
   async create(movimiento: Movimiento): Promise<Movimiento> {
     return this.movimientoModel.create(movimiento);
@@ -16,6 +16,13 @@ export class MovimientoRepository {
 
   async findById(id: string): Promise<Movimiento | null> {
     return this.movimientoModel.findByPk(id);
+  }
+
+  async findByInventario(inventarioId: string): Promise<Movimiento[]> {
+    return this.movimientoModel.findAll({
+      where: { inventarioId },
+      order: [['fecha', 'DESC']]
+    });
   }
 
   async update(id: string, updates: Partial<Movimiento>): Promise<Movimiento | null> {

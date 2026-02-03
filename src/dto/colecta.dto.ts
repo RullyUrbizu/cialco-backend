@@ -26,6 +26,10 @@ export class CreateColectaDto {
   canastilloId?: string;
 
   @IsOptional()
+  @IsString({ message: 'El canastilloCodigo debe ser un texto' })
+  canastilloCodigo?: string;
+
+  @IsOptional()
   @IsInt({ message: 'La cantidad debe ser un número entero' })
   @Min(0, { message: 'La cantidad no puede ser negativa' })
   cantidad?: number;
@@ -70,6 +74,10 @@ export class UpdateColectaDto {
   @IsOptional()
   @IsUUID('all', { message: 'El canastilloId debe ser un UUID válido' })
   canastilloId?: string;
+
+  @IsOptional()
+  @IsString({ message: 'El canastilloCodigo debe ser un texto' })
+  canastilloCodigo?: string;
 
   @IsOptional()
   @IsInt({ message: 'La cantidad debe ser un número entero' })

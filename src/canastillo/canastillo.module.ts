@@ -9,5 +9,6 @@ import { Canastillo } from 'src/modelo/canastillo';
   imports: [SequelizeModule.forFeature([Canastillo])],
   providers: [CanastilloService, CanastilloRepository],
   controllers: [CanastilloController],
+  exports: [CanastilloService, CanastilloRepository]
 })
-export class CanastilloModule {}
+export class CanastilloModule { }

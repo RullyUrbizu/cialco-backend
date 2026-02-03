@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Cliente } from 'src/modelo/cliente';
+import { Colecta } from 'src/modelo/colecta';
+import { Inventario } from 'src/modelo/inventario';
+import { Toro } from 'src/modelo/toro';
+import { Termo } from 'src/modelo/termo';
 
 @Injectable()
 export class ClienteRepository {
@@ -17,7 +21,14 @@ export class ClienteRepository {
   }
 
   async findById(id: string): Promise<Cliente | null> {
-    return this.clienteModel.findByPk(id);
+    return this.clienteModel.findByPk(id, {
+      include: [
+        {
+          model: Colecta,
+          include: [Inventario, Toro, Termo]
+        }
+      ]
+    });
   }
 
   async update(id: string, updates: Partial<Cliente>): Promise<Cliente | null> {

@@ -27,6 +27,10 @@ export class CreateMovimientoDto {
   @IsString()
   @MaxLength(1000, { message: 'Las notas no pueden exceder 1000 caracteres' })
   notas?: string;
+
+  @IsOptional()
+  @IsString()
+  fecha?: string;
 }
 
 export class UpdateMovimientoDto {

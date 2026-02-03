@@ -18,7 +18,7 @@ export class MovimientoService {
       const movimiento = await this.movimientoRepository.create({
         id: uuidv4(),
         ...createMovimientoDto,
-        fecha: new Date()
+        fecha: createMovimientoDto.fecha || new Date().toISOString()
       } as any);
 
       // Actualizar el inventario
@@ -52,6 +52,10 @@ export class MovimientoService {
 
   findById(id: string): Promise<Movimiento | null> {
     return this.movimientoRepository.findById(id);
+  }
+
+  findByInventario(inventarioId: string): Promise<Movimiento[]> {
+    return this.movimientoRepository.findByInventario(inventarioId);
   }
 
   update(id: string, updateMovimientoDto: UpdateMovimientoDto): Promise<Movimiento | null> {

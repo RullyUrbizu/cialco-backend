@@ -26,7 +26,7 @@ export class Colecta extends Model<Colecta> {
     @Column({ type: DataType.STRING, field: 'canastillo_id' })
     declare canastilloId: string;
 
-    @Column(DataType.DATE)
+    @Column(DataType.DATEONLY)
     declare fecha: Date;
 
     @Column(DataType.STRING)

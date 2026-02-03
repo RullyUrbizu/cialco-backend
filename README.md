@@ -11,9 +11,8 @@ API REST para la gestión integral de stock, clientes, movimientos de inventario
 - **Framework**: NestJS
 - **Lenguaje**: TypeScript
 - **Base de datos**: PostgreSQL
-- **ORM**: TypeORM
-- **Autenticación**: JWT
-- **Validación**: class-validator
+- **ORM**: Sequelize
+- **Validación**: class-validator y class-transformer
 
 ## Requisitos previos
 
@@ -44,10 +43,6 @@ DB_DATABASE=cialco_db
 # Aplicación
 PORT=3000
 NODE_ENV=development
-
-# JWT
-JWT_SECRET=tu_clave_secreta_jwt
-JWT_EXPIRATION=1d
 
 # CORS
 CORS_ORIGIN=http://localhost:5173
@@ -119,10 +114,6 @@ src/
 ```
 
 ## Endpoints principales
-
-### Autenticación
-- `POST /auth/login` - Iniciar sesión
-- `POST /auth/register` - Registrar usuario
 
 ### Clientes
 - `GET /clientes` - Listar clientes
@@ -197,9 +188,7 @@ psql -U tu_usuario -d cialco_db -f src/datos_prueba_generados.sql
 - Verifica que `CORS_ORIGIN` en `.env` coincida con la URL del frontend
 - Para desarrollo local, usa `http://localhost:5173`
 
-### Error de autenticación
-- Verifica que `JWT_SECRET` esté configurado en `.env`
-- Asegúrate de incluir el token en el header: `Authorization: Bearer <token>`
+
 
 ## Contribuir
 

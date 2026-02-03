@@ -27,6 +27,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         database: configService.get<string>('DB_NAME'),
         autoLoadModels: true,
         synchronize: configService.get<string>('NODE_ENV') !== 'production',
+        timezone: 'America/Argentina/Buenos_Aires',
         define: {
           underscored: true,
         },
