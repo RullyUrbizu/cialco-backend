@@ -1,9 +1,8 @@
-import { Column, Model, Table, DataType, ForeignKey, BelongsTo, HasOne } from 'sequelize-typescript';
+import { Column, Model, Table, DataType, ForeignKey, BelongsTo, HasOne, HasMany } from 'sequelize-typescript';
 import { Toro } from './toro';
 import { Cliente } from './cliente';
-import { Canastillo } from './canastillo';
-import { Termo } from './termo';
 import { Inventario } from './inventario';
+import { ColectaContenedor } from './colecta-contenedor';
 
 @Table({ tableName: 'colectas' })
 export class Colecta extends Model<Colecta> {
@@ -17,14 +16,6 @@ export class Colecta extends Model<Colecta> {
     @ForeignKey(() => Cliente)
     @Column({ type: DataType.STRING, field: 'cliente_id' })
     declare clienteId: string;
-
-    @ForeignKey(() => Termo)
-    @Column({ type: DataType.STRING, field: 'termo_id' })
-    declare termoId: string;
-
-    @ForeignKey(() => Canastillo)
-    @Column({ type: DataType.STRING, field: 'canastillo_id' })
-    declare canastilloId: string;
 
     @Column(DataType.DATEONLY)
     declare fecha: Date;
@@ -50,11 +41,8 @@ export class Colecta extends Model<Colecta> {
     @BelongsTo(() => Cliente)
     declare cliente: Cliente;
 
-    @BelongsTo(() => Termo)
-    declare termo: Termo;
-
-    @BelongsTo(() => Canastillo)
-    declare canastillo: Canastillo;
+    @HasMany(() => ColectaContenedor, { as: 'contenedores' })
+    declare contenedores: ColectaContenedor[];
 
     @HasOne(() => Inventario)
     declare inventario: Inventario;

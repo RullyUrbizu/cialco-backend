@@ -1,4 +1,23 @@
-import { IsString, IsNotEmpty, IsOptional, IsUUID, IsDateString, IsInt, Min } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsUUID, IsDateString, IsInt, Min, IsArray, ValidateNested, ArrayMinSize } from 'class-validator';
+import { Type } from 'class-transformer';
+
+export class ContenedorDto {
+  @IsOptional()
+  @IsUUID('all', { message: 'El termoId debe ser un UUID válido' })
+  termoId?: string;
+
+  @IsOptional()
+  @IsUUID('all', { message: 'El canastilloId debe ser un UUID válido' })
+  canastilloId?: string;
+
+  @IsOptional()
+  @IsString({ message: 'El canastilloCodigo debe ser un texto' })
+  canastilloCodigo?: string;
+
+  @IsInt({ message: 'La cantidad debe ser un número entero' })
+  @Min(1, { message: 'La cantidad debe ser al menos 1' })
+  cantidad: number;
+}
 
 export class CreateColectaDto {
   @IsUUID('all', { message: 'El toroId debe ser un UUID válido' })
@@ -17,17 +36,11 @@ export class CreateColectaDto {
   @IsString()
   vigorMot?: string;
 
-  @IsOptional()
-  @IsUUID('all', { message: 'El termoId debe ser un UUID válido' })
-  termoId?: string;
-
-  @IsOptional()
-  @IsUUID('all', { message: 'El canastilloId debe ser un UUID válido' })
-  canastilloId?: string;
-
-  @IsOptional()
-  @IsString({ message: 'El canastilloCodigo debe ser un texto' })
-  canastilloCodigo?: string;
+  @IsArray({ message: 'Los contenedores deben ser un array' })
+  @ValidateNested({ each: true })
+  @Type(() => ContenedorDto)
+  @ArrayMinSize(1, { message: 'Debe haber al menos un contenedor' })
+  contenedores: ContenedorDto[];
 
   @IsOptional()
   @IsInt({ message: 'La cantidad debe ser un número entero' })
@@ -68,34 +81,13 @@ export class UpdateColectaDto {
   vigorMot?: string;
 
   @IsOptional()
-  @IsUUID('all', { message: 'El termoId debe ser un UUID válido' })
-  termoId?: string;
-
-  @IsOptional()
-  @IsUUID('all', { message: 'El canastilloId debe ser un UUID válido' })
-  canastilloId?: string;
-
-  @IsOptional()
-  @IsString({ message: 'El canastilloCodigo debe ser un texto' })
-  canastilloCodigo?: string;
+  @IsArray({ message: 'Los contenedores deben ser un array' })
+  @ValidateNested({ each: true })
+  @Type(() => ContenedorDto)
+  contenedores?: ContenedorDto[];
 
   @IsOptional()
   @IsInt({ message: 'La cantidad debe ser un número entero' })
   @Min(0, { message: 'La cantidad no puede ser negativa' })
   cantidad?: number;
-
-  @IsOptional()
-  @IsInt({ message: 'El ingreso debe ser un número entero' })
-  @Min(0, { message: 'El ingreso no puede ser negativo' })
-  ingreso?: number;
-
-  @IsOptional()
-  @IsInt({ message: 'La salida debe ser un número entero' })
-  @Min(0, { message: 'La salida no puede ser negativa' })
-  sale?: number;
-
-  @IsOptional()
-  @IsInt({ message: 'El stock debe ser un número entero' })
-  @Min(0, { message: 'El stock no puede ser negativo' })
-  stock?: number;
 }

@@ -5,13 +5,15 @@ import { v4 as uuidv4 } from 'uuid';
 import { CreateColectaDto, UpdateColectaDto } from 'src/dto/colecta.dto';
 import { InventarioRepository } from 'src/inventario/inventario.repository';
 import { CanastilloRepository } from 'src/canastillo/canastillo.repository';
+import { ColectaContenedorRepository } from './colecta-contenedor.repository';
 
 @Injectable()
 export class ColectaService {
   constructor(
     private readonly colectaRepository: ColectaRepository,
     private readonly inventarioRepository: InventarioRepository,
-    private readonly canastilloRepository: CanastilloRepository
+    private readonly canastilloRepository: CanastilloRepository,
+    private readonly colectaContenedorRepository: ColectaContenedorRepository
   ) { }
 
   private async resolverCanastillo(termoId: string | undefined, canastilloId: string | undefined, canastilloCodigo: string | undefined): Promise<string | undefined> {
@@ -30,10 +32,10 @@ export class ColectaService {
   }
 
   async create(createColectaDto: CreateColectaDto): Promise<Colecta> {
-    const { canastilloCodigo, ...data } = createColectaDto;
+    const { contenedores, ...data } = createColectaDto;
 
-    // Resolver canastilloId si se pasó código y termo
-    const actualCanastilloId = await this.resolverCanastillo(data.termoId, data.canastilloId, canastilloCodigo);
+    // Calcular cantidad total de todos los contenedores
+    const totalCantidad = contenedores.reduce((sum, c) => sum + c.cantidad, 0);
 
     const colectaId = uuidv4();
 
@@ -41,15 +43,33 @@ export class ColectaService {
     await this.colectaRepository.create({
       id: colectaId,
       ...data,
-      canastilloId: actualCanastilloId,
+      cantidad: totalCantidad,
       fecha: data.fecha
     } as any);
+
+    // Crear entradas de contenedores
+    for (const contenedor of contenedores) {
+      const canastilloId = await this.resolverCanastillo(
+        contenedor.termoId,
+        contenedor.canastilloId,
+        contenedor.canastilloCodigo
+      );
+
+      await this.colectaContenedorRepository.create({
+        id: uuidv4(),
+        colectaId,
+        termoId: contenedor.termoId,
+        canastilloId,
+        cantidad: contenedor.cantidad,
+        stockActual: contenedor.cantidad  // Inicializar stock con la cantidad
+      } as any);
+    }
 
     // Crear el inventario automáticamente
     await this.inventarioRepository.create({
       id: uuidv4(),
       colectaId: colectaId,
-      cantidadInicial: data.cantidad || 0,
+      cantidadInicial: totalCantidad,
       ingresosTotal: 0,
       salidasTotal: 0
     } as any);
@@ -81,26 +101,69 @@ export class ColectaService {
   }
 
   async update(id: string, updateColectaDto: UpdateColectaDto): Promise<Colecta | null> {
-    const { canastilloCodigo, ...data } = updateColectaDto;
+    const { contenedores, ...data } = updateColectaDto;
     const updates: any = { ...data };
 
-    if (canastilloCodigo) {
-      // Necesitamos el termoId para resolver el canastillo. 
-      // Si no viene en el DTO, lo buscamos de la colecta actual.
-      let termoId = data.termoId;
-      if (!termoId) {
-        const colectaActual = await this.colectaRepository.findById(id);
-        termoId = colectaActual?.termo?.id;
-      }
+    // Si se proporcionan contenedores, actualizar la relación
+    if (contenedores && contenedores.length > 0) {
+      // Calcular nueva cantidad total
+      const totalCantidad = contenedores.reduce((sum, c) => sum + c.cantidad, 0);
+      updates.cantidad = totalCantidad;
 
-      if (termoId) {
-        updates.canastilloId = await this.resolverCanastillo(termoId, undefined, canastilloCodigo);
+      // IMPORTANTE: Obtener contenedores existentes ANTES de eliminarlos para preservar stockActual
+      const contenedoresExistentes = await this.colectaContenedorRepository.findByColectaId(id);
+
+      // Eliminar contenedores existentes
+      await this.colectaContenedorRepository.deleteByColectaId(id);
+
+      // Crear nuevos contenedores preservando el stockActual
+      for (let i = 0; i < contenedores.length; i++) {
+        const contenedor = contenedores[i];
+        const canastilloId = await this.resolverCanastillo(
+          contenedor.termoId,
+          contenedor.canastilloId,
+          contenedor.canastilloCodigo
+        );
+
+        let stockActual: number;
+
+        // Estrategia 1: Buscar coincidencia exacta por termo+canastillo
+        const exactMatch = contenedoresExistentes.find(
+          e => e.termoId === contenedor.termoId && e.canastilloId === canastilloId
+        );
+
+        if (exactMatch) {
+          // Coincidencia exacta encontrada, usar su stock
+          stockActual = exactMatch.stockActual ?? exactMatch.cantidad;
+        } else {
+          // Estrategia 2: Si no hay coincidencia exacta, buscar por posición/índice
+          // Esto maneja el caso donde se cambia el canastillo pero es el mismo contenedor lógico
+          const existenteEnPosicion = contenedoresExistentes[i];
+
+          if (existenteEnPosicion && existenteEnPosicion.termoId === contenedor.termoId) {
+            // Mismo termo, diferente canastillo -> es un cambio de ubicación, preservar stock
+            stockActual = existenteEnPosicion.stockActual ?? existenteEnPosicion.cantidad;
+          } else {
+            // Es un contenedor completamente nuevo, inicializar con cantidad
+            stockActual = contenedor.cantidad;
+          }
+        }
+
+        await this.colectaContenedorRepository.create({
+          id: uuidv4(),
+          colectaId: id,
+          termoId: contenedor.termoId,
+          canastilloId,
+          cantidad: contenedor.cantidad,
+          stockActual: stockActual  // Preservar el stock actual
+        } as any);
       }
     }
 
     if (data.fecha) {
       updates.fecha = data.fecha;
     }
+
     return this.colectaRepository.update(id, updates);
   }
 

@@ -4,7 +4,9 @@ import { Cliente } from 'src/modelo/cliente';
 import { Colecta } from 'src/modelo/colecta';
 import { Inventario } from 'src/modelo/inventario';
 import { Toro } from 'src/modelo/toro';
+import { ColectaContenedor } from 'src/modelo/colecta-contenedor';
 import { Termo } from 'src/modelo/termo';
+import { Canastillo } from 'src/modelo/canastillo';
 
 @Injectable()
 export class ClienteRepository {
@@ -25,7 +27,15 @@ export class ClienteRepository {
       include: [
         {
           model: Colecta,
-          include: [Inventario, Toro, Termo]
+          include: [
+            Inventario,
+            Toro,
+            {
+              model: ColectaContenedor,
+              as: 'contenedores',
+              include: [Termo, Canastillo]
+            }
+          ]
         }
       ]
     });

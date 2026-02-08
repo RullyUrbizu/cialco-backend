@@ -1,5 +1,5 @@
 import { Column, Model, Table, DataType, HasMany } from 'sequelize-typescript';
-import { Colecta } from './colecta';
+import { ColectaContenedor } from './colecta-contenedor';
 
 @Table({
   tableName: 'termos',
@@ -12,6 +12,6 @@ export class Termo extends Model<Termo> {
   @Column(DataType.STRING)
   declare codigo: string;
 
-  @HasMany(() => Colecta)
-  declare colectas: Colecta[];
+  @HasMany(() => ColectaContenedor)
+  declare contenedores: ColectaContenedor[];
 }

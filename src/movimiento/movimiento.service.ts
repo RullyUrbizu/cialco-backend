@@ -4,12 +4,14 @@ import { MovimientoRepository } from './movimiento.repository';
 import { Movimiento } from 'src/modelo/movimiento';
 import { CreateMovimientoDto, UpdateMovimientoDto } from 'src/dto/movimiento.dto';
 import { InventarioRepository } from 'src/inventario/inventario.repository';
+import { ColectaContenedorRepository } from 'src/colecta/colecta-contenedor.repository';
 
 @Injectable()
 export class MovimientoService {
   constructor(
     private readonly movimientoRepository: MovimientoRepository,
-    private readonly inventarioRepository: InventarioRepository
+    private readonly inventarioRepository: InventarioRepository,
+    private readonly colectaContenedorRepository: ColectaContenedorRepository
   ) { }
 
   async create(createMovimientoDto: CreateMovimientoDto): Promise<Movimiento> {
@@ -26,6 +28,33 @@ export class MovimientoService {
 
       if (!inventario) {
         throw new Error('Inventario no encontrado');
+      }
+
+      // Si se especificó distribución por contenedores, actualizar stock de cada uno
+      if (createMovimientoDto.contenedoresDistribucion && createMovimientoDto.contenedoresDistribucion.length > 0) {
+        for (const dist of createMovimientoDto.contenedoresDistribucion) {
+          const contenedor = await this.colectaContenedorRepository.findById(dist.contenedorId);
+
+          if (!contenedor) {
+            throw new Error(`Contenedor ${dist.contenedorId} no encontrado`);
+          }
+
+          let nuevoStock = contenedor.stockActual;
+
+          if (createMovimientoDto.tipo === 'ingreso') {
+            nuevoStock += dist.cantidad;
+          } else if (createMovimientoDto.tipo === 'salida') {
+            nuevoStock -= dist.cantidad;
+
+            if (nuevoStock < 0) {
+              throw new Error(`Stock insuficiente en contenedor. Disponible: ${contenedor.stockActual}, solicitado: ${dist.cantidad}`);
+            }
+          }
+
+          await this.colectaContenedorRepository.update(dist.contenedorId, {
+            stockActual: nuevoStock
+          });
+        }
       }
 
       // Actualizar ingresosTotal o salidasTotal según el tipo

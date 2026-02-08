@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { and } from 'sequelize';
-import { Canastillo } from 'src/modelo/canastillo';
 import { Cliente } from 'src/modelo/cliente';
 import { Colecta } from 'src/modelo/colecta';
 import { Inventario } from 'src/modelo/inventario';
-import { Termo } from 'src/modelo/termo';
 import { Toro } from 'src/modelo/toro';
+import { ColectaContenedor } from 'src/modelo/colecta-contenedor';
+import { Termo } from 'src/modelo/termo';
+import { Canastillo } from 'src/modelo/canastillo';
 
 @Injectable()
 export class ColectaRepository {
@@ -24,11 +24,16 @@ export class ColectaRepository {
       include: [
         { model: Toro },
         { model: Cliente },
-        { model: Termo },
-        { model: Canastillo }
+        {
+          model: ColectaContenedor,
+          as: 'contenedores',
+          include: [
+            { model: Termo },
+            { model: Canastillo }
+          ]
+        }
       ],
-      raw: true,
-      nest: true,
+      raw: false,
     });
   }
 
@@ -43,10 +48,16 @@ export class ColectaRepository {
           },
           required: true,
         },
-        { model: Termo },
+        {
+          model: ColectaContenedor,
+          as: 'contenedores',
+          include: [
+            { model: Termo },
+            { model: Canastillo }
+          ]
+        }
       ],
-      raw: true,
-      nest: true,
+      raw: false,
     });
   }
 
@@ -61,11 +72,16 @@ export class ColectaRepository {
           required: true,
         },
         { model: Cliente },
-        { model: Termo },
-        { model: Canastillo },
+        {
+          model: ColectaContenedor,
+          as: 'contenedores',
+          include: [
+            { model: Termo },
+            { model: Canastillo }
+          ]
+        }
       ],
-      raw: true,
-      nest: true,
+      raw: false,
     });
   }
 
@@ -75,8 +91,14 @@ export class ColectaRepository {
       include: [
         { model: Toro },
         { model: Cliente },
-        { model: Termo },
-        { model: Canastillo },
+        {
+          model: ColectaContenedor,
+          as: 'contenedores',
+          include: [
+            { model: Termo },
+            { model: Canastillo }
+          ]
+        },
         { model: Inventario }
       ],
     });

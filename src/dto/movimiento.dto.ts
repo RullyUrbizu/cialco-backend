@@ -1,8 +1,20 @@
-import { IsUUID, IsNotEmpty, IsInt, Min, IsEnum, IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsUUID, IsNotEmpty, IsInt, Min, IsEnum, IsOptional, IsString, MaxLength, IsArray, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export enum TipoMovimiento {
   INGRESO = 'ingreso',
   SALIDA = 'salida',
+}
+
+export class ContenedorMovimientoDto {
+  @IsUUID('all', { message: 'El contenedorId debe ser un UUID válido' })
+  @IsNotEmpty({ message: 'El contenedorId es obligatorio' })
+  contenedorId: string;
+
+  @IsInt({ message: 'La cantidad debe ser un número entero' })
+  @Min(1, { message: 'La cantidad debe ser mayor a 0' })
+  @IsNotEmpty({ message: 'La cantidad es obligatoria' })
+  cantidad: number;
 }
 
 export class CreateMovimientoDto {
@@ -31,6 +43,13 @@ export class CreateMovimientoDto {
   @IsOptional()
   @IsString()
   fecha?: string;
+
+  // Distribución por contenedores (opcional, si no se especifica se usa el total)
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ContenedorMovimientoDto)
+  contenedoresDistribucion?: ContenedorMovimientoDto[];
 }
 
 export class UpdateMovimientoDto {
