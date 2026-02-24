@@ -22,16 +22,20 @@ async function bootstrap() {
     }),
   );
 
-  const allowedOrigins = configService.get<string>('ALLOWED_ORIGINS')?.split(',') || [
-    'http://localhost:5173',
-  ];
+  const allowedOrigins = configService
+    .get<string>('ALLOWED_ORIGINS')
+    ?.split(',') || ['http://localhost:5173'];
 
   app.enableCors({
     origin: (origin: any, callback: any) => {
       // Regex para permitir cualquier IP de la red local 192.168.1.x
       const localIpRegex = /^http:\/\/192\.168\.1\.\d{1,3}(:\d+)?$/;
 
-      if (!origin || allowedOrigins.includes(origin) || localIpRegex.test(origin)) {
+      if (
+        !origin ||
+        allowedOrigins.includes(origin) ||
+        localIpRegex.test(origin)
+      ) {
         callback(null, true);
       } else {
         callback(new Error('Not allowed by CORS'));

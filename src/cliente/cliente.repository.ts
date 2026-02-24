@@ -10,7 +10,9 @@ import { Canastillo } from 'src/modelo/canastillo';
 
 @Injectable()
 export class ClienteRepository {
-  constructor(@InjectModel(Cliente) private readonly clienteModel: typeof Cliente) { }
+  constructor(
+    @InjectModel(Cliente) private readonly clienteModel: typeof Cliente,
+  ) {}
 
   async create(cliente: Cliente): Promise<Cliente> {
     return this.clienteModel.create(cliente);
@@ -33,11 +35,11 @@ export class ClienteRepository {
             {
               model: ColectaContenedor,
               as: 'contenedores',
-              include: [Termo, Canastillo]
-            }
-          ]
-        }
-      ]
+              include: [Termo, Canastillo],
+            },
+          ],
+        },
+      ],
     });
   }
 

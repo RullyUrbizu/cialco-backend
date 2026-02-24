@@ -4,10 +4,13 @@ import { Inventario } from 'src/modelo/inventario';
 
 @Injectable()
 export class InventarioRepository {
-  constructor(@InjectModel(Inventario) private readonly inventarioModel: typeof Inventario) { }
+  constructor(
+    @InjectModel(Inventario)
+    private readonly inventarioModel: typeof Inventario,
+  ) {}
 
-  async create(inventario: Inventario): Promise<Inventario> {
-    return this.inventarioModel.create(inventario);
+  async create(inventario: Inventario, transaction?: any): Promise<Inventario> {
+    return this.inventarioModel.create(inventario, { transaction });
   }
 
   async findAll(): Promise<Inventario[]> {
@@ -20,14 +23,18 @@ export class InventarioRepository {
 
   async findByColectaId(colectaId: string): Promise<Inventario | null> {
     return this.inventarioModel.findOne({
-      where: { colectaId }
+      where: { colectaId },
     });
   }
 
-  async update(id: string, updates: Partial<Inventario>): Promise<Inventario | null> {
-    const inv = await this.inventarioModel.findByPk(id);
+  async update(
+    id: string,
+    updates: Partial<Inventario>,
+    transaction?: any,
+  ): Promise<Inventario | null> {
+    const inv = await this.inventarioModel.findByPk(id, { transaction });
     if (!inv) return null;
-    return inv.update(updates);
+    return inv.update(updates, { transaction });
   }
 
   async delete(id: string): Promise<boolean> {

@@ -1,11 +1,21 @@
-import { Body, Controller, Get, Param, Post, Put, Delete, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  Delete,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import { TermoService } from './termo.service';
 import { Termo } from 'src/modelo/termo';
 import { CreateTermoDto, UpdateTermoDto } from 'src/dto/termo.dto';
 
 @Controller('termos')
 export class TermoController {
-  constructor(private readonly termoService: TermoService) { }
+  constructor(private readonly termoService: TermoService) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
@@ -29,7 +39,10 @@ export class TermoController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateTermoDto: UpdateTermoDto): Promise<Termo | null> {
+  update(
+    @Param('id') id: string,
+    @Body() updateTermoDto: UpdateTermoDto,
+  ): Promise<Termo | null> {
     return this.termoService.update(id, updateTermoDto);
   }
 

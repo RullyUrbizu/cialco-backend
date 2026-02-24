@@ -13,7 +13,7 @@ export class ColectaRepository {
   constructor(
     @InjectModel(Colecta)
     private readonly colectaModel: typeof Colecta,
-  ) { }
+  ) {}
 
   async create(colecta: Colecta): Promise<Colecta> {
     return this.colectaModel.create(colecta);
@@ -27,11 +27,8 @@ export class ColectaRepository {
         {
           model: ColectaContenedor,
           as: 'contenedores',
-          include: [
-            { model: Termo },
-            { model: Canastillo }
-          ]
-        }
+          include: [{ model: Termo }, { model: Canastillo }],
+        },
       ],
       raw: false,
     });
@@ -51,11 +48,8 @@ export class ColectaRepository {
         {
           model: ColectaContenedor,
           as: 'contenedores',
-          include: [
-            { model: Termo },
-            { model: Canastillo }
-          ]
-        }
+          include: [{ model: Termo }, { model: Canastillo }],
+        },
       ],
       raw: false,
     });
@@ -75,16 +69,12 @@ export class ColectaRepository {
         {
           model: ColectaContenedor,
           as: 'contenedores',
-          include: [
-            { model: Termo },
-            { model: Canastillo }
-          ]
-        }
+          include: [{ model: Termo }, { model: Canastillo }],
+        },
       ],
       raw: false,
     });
   }
-
 
   async findById(id: string): Promise<Colecta | null> {
     return this.colectaModel.findByPk(id, {
@@ -94,12 +84,9 @@ export class ColectaRepository {
         {
           model: ColectaContenedor,
           as: 'contenedores',
-          include: [
-            { model: Termo },
-            { model: Canastillo }
-          ]
+          include: [{ model: Termo }, { model: Canastillo }],
         },
-        { model: Inventario }
+        { model: Inventario },
       ],
     });
   }

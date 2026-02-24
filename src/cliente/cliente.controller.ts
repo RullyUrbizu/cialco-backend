@@ -1,11 +1,22 @@
-import { Body, Controller, Get, Param, Post, Put, Delete, HttpCode, HttpStatus, NotFoundException } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  Delete,
+  HttpCode,
+  HttpStatus,
+  NotFoundException,
+} from '@nestjs/common';
 import { ClienteService } from './cliente.service';
 import { Cliente } from 'src/modelo/cliente';
 import { CreateClienteDto, UpdateClienteDto } from 'src/dto/cliente.dto';
 
 @Controller('clientes')
 export class ClienteController {
-  constructor(private readonly clienteService: ClienteService) { }
+  constructor(private readonly clienteService: ClienteService) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
@@ -28,7 +39,10 @@ export class ClienteController {
   }
 
   @Put(':id')
-  async update(@Param('id') id: string, @Body() updateClienteDto: UpdateClienteDto): Promise<Cliente> {
+  async update(
+    @Param('id') id: string,
+    @Body() updateClienteDto: UpdateClienteDto,
+  ): Promise<Cliente> {
     const cliente = await this.clienteService.update(id, updateClienteDto);
     if (!cliente) {
       throw new NotFoundException(`Cliente con ID ${id} no encontrado`);

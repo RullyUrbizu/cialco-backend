@@ -2,17 +2,20 @@ import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { CanastilloRepository } from './canastillo.repository';
 import { Canastillo } from 'src/modelo/canastillo';
-import { CreateCanastilloDto, UpdateCanastilloDto } from 'src/dto/canastillo.dto';
+import {
+  CreateCanastilloDto,
+  UpdateCanastilloDto,
+} from 'src/dto/canastillo.dto';
 
 @Injectable()
 export class CanastilloService {
-  constructor(private readonly canastilloRepository: CanastilloRepository) {}
+  constructor(private readonly canastilloRepository: CanastilloRepository) { }
 
   async create(createCanastilloDto: CreateCanastilloDto): Promise<Canastillo> {
-    return this.canastilloRepository.create({ 
-      id: uuidv4(), 
-      ...createCanastilloDto 
-    } as any);
+    return this.canastilloRepository.create({
+      id: uuidv4(),
+      ...createCanastilloDto,
+    } as Partial<Canastillo> as Canastillo);
   }
 
   findAll(): Promise<Canastillo[]> {
@@ -23,8 +26,11 @@ export class CanastilloService {
     return this.canastilloRepository.findById(id);
   }
 
-  update(id: string, updateCanastilloDto: UpdateCanastilloDto): Promise<Canastillo | null> {
-    return this.canastilloRepository.update(id, updateCanastilloDto as any);
+  update(
+    id: string,
+    updateCanastilloDto: UpdateCanastilloDto,
+  ): Promise<Canastillo | null> {
+    return this.canastilloRepository.update(id, updateCanastilloDto as Partial<Canastillo>);
   }
 
   delete(id: string): Promise<boolean> {

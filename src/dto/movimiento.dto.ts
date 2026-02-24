@@ -1,4 +1,15 @@
-import { IsUUID, IsNotEmpty, IsInt, Min, IsEnum, IsOptional, IsString, MaxLength, IsArray, ValidateNested } from 'class-validator';
+import {
+  IsUUID,
+  IsNotEmpty,
+  IsInt,
+  Min,
+  IsEnum,
+  IsOptional,
+  IsString,
+  MaxLength,
+  IsArray,
+  ValidateNested,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 export enum TipoMovimiento {

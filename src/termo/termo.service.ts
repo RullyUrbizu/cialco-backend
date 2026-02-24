@@ -6,12 +6,12 @@ import { CreateTermoDto, UpdateTermoDto } from 'src/dto/termo.dto';
 
 @Injectable()
 export class TermoService {
-  constructor(private readonly termoRepository: TermoRepository) { }
+  constructor(private readonly termoRepository: TermoRepository) {}
 
   async create(createTermoDto: CreateTermoDto): Promise<Termo> {
     return this.termoRepository.create({
       id: uuidv4(),
-      ...createTermoDto
+      ...createTermoDto,
     } as any);
   }
 

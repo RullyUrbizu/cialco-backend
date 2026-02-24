@@ -4,7 +4,7 @@ import { Termo } from 'src/modelo/termo';
 
 @Injectable()
 export class TermoRepository {
-  constructor(@InjectModel(Termo) private readonly termoModel: typeof Termo) { }
+  constructor(@InjectModel(Termo) private readonly termoModel: typeof Termo) {}
 
   async create(termo: Termo): Promise<Termo> {
     return this.termoModel.create(termo);
@@ -37,7 +37,8 @@ export class TermoRepository {
       throw new Error('Sequelize instance not available');
     }
 
-    const results = await sequelize.query(`
+    const results = await sequelize.query(
+      `
       SELECT 
         t.id,
         t.codigo,
@@ -46,9 +47,11 @@ export class TermoRepository {
       LEFT JOIN colectas c ON c.termo_id = t.id
       GROUP BY t.id, t.codigo
       ORDER BY t.codigo
-    `, {
-      type: QueryTypes.SELECT
-    });
+    `,
+      {
+        type: QueryTypes.SELECT,
+      },
+    );
 
     return results;
   }

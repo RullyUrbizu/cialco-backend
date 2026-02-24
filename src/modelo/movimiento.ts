@@ -1,4 +1,10 @@
-import { Column, Model, Table, DataType, ForeignKey } from 'sequelize-typescript';
+import {
+  Column,
+  Model,
+  Table,
+  DataType,
+  ForeignKey,
+} from 'sequelize-typescript';
 import { Inventario } from './inventario';
 import { Cliente } from './cliente';
 
@@ -11,7 +17,7 @@ export enum TipoMovimiento {
   tableName: 'movimientos',
   timestamps: true,
   createdAt: 'created_at',
-  updatedAt: false
+  updatedAt: false,
 })
 export class Movimiento extends Model<Movimiento> {
   @Column({ primaryKey: true, type: DataType.STRING })

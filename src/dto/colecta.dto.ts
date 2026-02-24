@@ -1,4 +1,15 @@
-import { IsString, IsNotEmpty, IsOptional, IsUUID, IsDateString, IsInt, Min, IsArray, ValidateNested, ArrayMinSize } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  IsUUID,
+  IsDateString,
+  IsInt,
+  Min,
+  IsArray,
+  ValidateNested,
+  ArrayMinSize,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class ContenedorDto {
@@ -28,7 +39,10 @@ export class CreateColectaDto {
   @IsNotEmpty({ message: 'El clienteId es obligatorio' })
   clienteId: string;
 
-  @IsDateString({}, { message: 'La fecha debe ser una fecha válida en formato ISO' })
+  @IsDateString(
+    {},
+    { message: 'La fecha debe ser una fecha válida en formato ISO' },
+  )
   @IsNotEmpty({ message: 'La fecha es obligatoria' })
   fecha: string;
 
@@ -73,7 +87,10 @@ export class UpdateColectaDto {
   clienteId?: string;
 
   @IsOptional()
-  @IsDateString({}, { message: 'La fecha debe ser una fecha válida en formato ISO' })
+  @IsDateString(
+    {},
+    { message: 'La fecha debe ser una fecha válida en formato ISO' },
+  )
   fecha?: string;
 
   @IsOptional()

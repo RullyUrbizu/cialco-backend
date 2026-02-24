@@ -1,7 +1,20 @@
-import { Body, Controller, Get, Param, Post, Put, Delete, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  Delete,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import { CanastilloService } from './canastillo.service';
 import { Canastillo } from 'src/modelo/canastillo';
-import { CreateCanastilloDto, UpdateCanastilloDto } from 'src/dto/canastillo.dto';
+import {
+  CreateCanastilloDto,
+  UpdateCanastilloDto,
+} from 'src/dto/canastillo.dto';
 
 @Controller('canastillos')
 export class CanastilloController {
@@ -9,7 +22,9 @@ export class CanastilloController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createCanastilloDto: CreateCanastilloDto): Promise<Canastillo> {
+  create(
+    @Body() createCanastilloDto: CreateCanastilloDto,
+  ): Promise<Canastillo> {
     return this.canastilloService.create(createCanastilloDto);
   }
 
@@ -24,7 +39,10 @@ export class CanastilloController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateCanastilloDto: UpdateCanastilloDto): Promise<Canastillo | null> {
+  update(
+    @Param('id') id: string,
+    @Body() updateCanastilloDto: UpdateCanastilloDto,
+  ): Promise<Canastillo | null> {
     return this.canastilloService.update(id, updateCanastilloDto);
   }
 

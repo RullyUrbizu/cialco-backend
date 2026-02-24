@@ -11,8 +11,8 @@ export class ClienteService {
   async create(createClienteDto: CreateClienteDto): Promise<Cliente> {
     return this.clienteRepository.create({
       id: uuidv4(),
-      ...createClienteDto
-    } as any);
+      ...createClienteDto,
+    } as Partial<Cliente> as Cliente);
   }
 
   findAll(): Promise<Cliente[]> {
@@ -23,9 +23,12 @@ export class ClienteService {
     return this.clienteRepository.findById(id);
   }
 
-  async update(id: string, updateClienteDto: UpdateClienteDto): Promise<Cliente | null> {
+  async update(
+    id: string,
+    updateClienteDto: UpdateClienteDto,
+  ): Promise<Cliente | null> {
     try {
-      return await this.clienteRepository.update(id, updateClienteDto as any);
+      return await this.clienteRepository.update(id, updateClienteDto as Partial<Cliente>);
     } catch (error) {
       if (error.parent && error.parent.code === '23505') {
         throw new ConflictException('El CUIT ya existe en la base de datos');

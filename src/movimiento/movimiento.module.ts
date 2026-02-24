@@ -11,9 +11,13 @@ import { ColectaContenedor } from 'src/modelo/colecta-contenedor';
 @Module({
   imports: [
     SequelizeModule.forFeature([Movimiento, ColectaContenedor]),
-    InventarioModule
+    InventarioModule,
   ],
-  providers: [MovimientoService, MovimientoRepository, ColectaContenedorRepository],
+  providers: [
+    MovimientoService,
+    MovimientoRepository,
+    ColectaContenedorRepository,
+  ],
   controllers: [MovimientoController],
 })
-export class MovimientoModule { }
+export class MovimientoModule {}

@@ -59,5 +59,7 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 *.xlsx
 *.xls
 *.sql
+!init-scripts/
+!init-scripts/*.sql
 excel_to_sql_generator.py
 excel_analysis.txt

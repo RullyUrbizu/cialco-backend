@@ -1,4 +1,10 @@
-import { Column, Model, Table, DataType, ForeignKey } from 'sequelize-typescript';
+import {
+  Column,
+  Model,
+  Table,
+  DataType,
+  ForeignKey,
+} from 'sequelize-typescript';
 import { Colecta } from './colecta';
 
 @Table({ tableName: 'inventario' })
@@ -7,7 +13,12 @@ export class Inventario extends Model<Inventario> {
   declare id: string;
 
   @ForeignKey(() => Colecta)
-  @Column({ type: DataType.STRING, allowNull: false, unique: true, field: 'colecta_id' })
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    unique: true,
+    field: 'colecta_id',
+  })
   declare colectaId: string;
 
   @Column({ type: DataType.INTEGER, allowNull: false, defaultValue: 0 })
@@ -21,7 +32,7 @@ export class Inventario extends Model<Inventario> {
 
   @Column({
     type: DataType.INTEGER,
-    field: 'stock_actual'
+    field: 'stock_actual',
   })
   declare stockActual: number;
 }

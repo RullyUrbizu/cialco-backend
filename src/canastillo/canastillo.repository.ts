@@ -4,7 +4,10 @@ import { Canastillo } from 'src/modelo/canastillo';
 
 @Injectable()
 export class CanastilloRepository {
-  constructor(@InjectModel(Canastillo) private readonly canastilloModel: typeof Canastillo) { }
+  constructor(
+    @InjectModel(Canastillo)
+    private readonly canastilloModel: typeof Canastillo,
+  ) {}
 
   async create(canastillo: Canastillo): Promise<Canastillo> {
     return this.canastilloModel.create(canastillo);
@@ -18,11 +21,17 @@ export class CanastilloRepository {
     return this.canastilloModel.findByPk(id);
   }
 
-  async findByTermoAndCodigo(termoId: string, codigo: string): Promise<Canastillo | null> {
+  async findByTermoAndCodigo(
+    termoId: string,
+    codigo: string,
+  ): Promise<Canastillo | null> {
     return this.canastilloModel.findOne({ where: { termoId, codigo } });
   }
 
-  async update(id: string, updates: Partial<Canastillo>): Promise<Canastillo | null> {
+  async update(
+    id: string,
+    updates: Partial<Canastillo>,
+  ): Promise<Canastillo | null> {
     const canastillo = await this.canastilloModel.findByPk(id);
     if (!canastillo) return null;
     return canastillo.update(updates);

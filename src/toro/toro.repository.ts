@@ -10,7 +10,7 @@ import { Canastillo } from 'src/modelo/canastillo';
 
 @Injectable()
 export class ToroRepository {
-  constructor(@InjectModel(Toro) private readonly toroModel: typeof Toro) { }
+  constructor(@InjectModel(Toro) private readonly toroModel: typeof Toro) {}
 
   async create(toro: Toro): Promise<Toro> {
     return this.toroModel.create(toro);
@@ -31,11 +31,11 @@ export class ToroRepository {
             {
               model: ColectaContenedor,
               as: 'contenedores',
-              include: [Termo, Canastillo]
-            }
-          ]
-        }
-      ]
+              include: [Termo, Canastillo],
+            },
+          ],
+        },
+      ],
     });
   }
 

@@ -6,13 +6,13 @@ import { CreateToroDto, UpdateToroDto } from 'src/dto/toro.dto';
 
 @Injectable()
 export class ToroService {
-  constructor(private readonly toroRepository: ToroRepository) {}
+  constructor(private readonly toroRepository: ToroRepository) { }
 
   async create(createToroDto: CreateToroDto): Promise<Toro> {
-    return this.toroRepository.create({ 
-      id: uuidv4(), 
-      ...createToroDto 
-    } as any);
+    return this.toroRepository.create({
+      id: uuidv4(),
+      ...createToroDto,
+    } as Partial<Toro> as Toro);
   }
 
   findAll(): Promise<Toro[]> {
@@ -24,7 +24,7 @@ export class ToroService {
   }
 
   update(id: string, updateToroDto: UpdateToroDto): Promise<Toro | null> {
-    return this.toroRepository.update(id, updateToroDto as any);
+    return this.toroRepository.update(id, updateToroDto as Partial<Toro>);
   }
 
   delete(id: string): Promise<boolean> {

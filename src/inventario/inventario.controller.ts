@@ -1,15 +1,30 @@
-import { Body, Controller, Get, Param, Post, Put, Delete, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  Delete,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import { InventarioService } from './inventario.service';
 import { Inventario } from 'src/modelo/inventario';
-import { CreateInventarioDto, UpdateInventarioDto } from 'src/dto/inventario.dto';
+import {
+  CreateInventarioDto,
+  UpdateInventarioDto,
+} from 'src/dto/inventario.dto';
 
 @Controller('inventario')
 export class InventarioController {
-  constructor(private readonly inventarioService: InventarioService) { }
+  constructor(private readonly inventarioService: InventarioService) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createInventarioDto: CreateInventarioDto): Promise<Inventario> {
+  create(
+    @Body() createInventarioDto: CreateInventarioDto,
+  ): Promise<Inventario> {
     return this.inventarioService.create(createInventarioDto);
   }
 
@@ -24,12 +39,17 @@ export class InventarioController {
   }
 
   @Get('colecta/:colectaId')
-  findByColectaId(@Param('colectaId') colectaId: string): Promise<Inventario | null> {
+  findByColectaId(
+    @Param('colectaId') colectaId: string,
+  ): Promise<Inventario | null> {
     return this.inventarioService.findByColectaId(colectaId);
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateInventarioDto: UpdateInventarioDto): Promise<Inventario | null> {
+  update(
+    @Param('id') id: string,
+    @Body() updateInventarioDto: UpdateInventarioDto,
+  ): Promise<Inventario | null> {
     return this.inventarioService.update(id, updateInventarioDto);
   }
 

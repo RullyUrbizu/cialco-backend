@@ -13,9 +13,9 @@ import { ColectaContenedorRepository } from './colecta-contenedor.repository';
   imports: [
     SequelizeModule.forFeature([Colecta, ColectaContenedor]),
     InventarioModule,
-    CanastilloModule
+    CanastilloModule,
   ],
   providers: [ColectaService, ColectaRepository, ColectaContenedorRepository],
-  controllers: [ColectaController]
+  controllers: [ColectaController],
 })
-export class ColectaModule { }
+export class ColectaModule {}

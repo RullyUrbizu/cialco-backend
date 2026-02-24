@@ -11,7 +11,7 @@ API REST para la gestión integral de stock, clientes, movimientos de inventario
 - **Framework**: NestJS
 - **Lenguaje**: TypeScript
 - **Base de datos**: PostgreSQL
-- **ORM**: Sequelize
+- **ORM**: Sequelize (con sequelize-typescript)
 - **Validación**: class-validator y class-transformer
 
 ## Requisitos previos
@@ -53,12 +53,24 @@ CORS_ORIGIN=http://localhost:5173
 Asegúrate de tener PostgreSQL instalado y ejecutándose. Crea la base de datos:
 
 ```sql
-CREATE DATABASE cialco_db;
+CREATE DATABASE cialco;
 ```
 
-Las tablas se crearán automáticamente al iniciar la aplicación gracias a TypeORM.
+Las tablas deben crearse usando el script en `init-scripts/1-schema.sql`.
 
-## Ejecutar la aplicación
+## 🚀 Ejecución con Docker
+
+Este repositorio incluye un archivo `docker-compose.yml` para levantar rápidamente la API y la base de datos:
+
+1.  Asegúrate de tener **Docker Desktop** instalado.
+2.  Desde la raíz de este repositorio, ejecuta:
+    ```bash
+    docker-compose up -d
+    ```
+3.  La API estará disponible en `http://localhost:3000`.
+4.  La base de datos se inicializará automáticamente con el esquema y datos en la carpeta `init-scripts/`.
+
+## Ejecutar la aplicación (Desarrollo Manual)
 
 ### Modo desarrollo
 
@@ -166,16 +178,11 @@ npm run format         # Formatea el código con Prettier
 
 ## Datos de prueba
 
-El proyecto incluye un archivo SQL con datos de prueba en:
-```
-src/datos_prueba_generados.sql
-```
+El proyecto incluye scripts de inicialización en la carpeta `/init-scripts` en la raíz del proyecto:
+- `1-schema.sql`: Estructura de tablas corregida.
+- `2-data.sql`: Datos iniciales de colectas, toros y clientes.
 
-Para cargar los datos de prueba:
-
-```bash
-psql -U tu_usuario -d cialco_db -f src/datos_prueba_generados.sql
-```
+Si usas Docker, estos se cargan automáticamente la primera vez.
 
 ## Solución de problemas
 

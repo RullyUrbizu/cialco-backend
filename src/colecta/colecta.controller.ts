@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Put,
+  Delete,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import { ColectaService } from './colecta.service';
 import { Colecta } from 'src/modelo/colecta';
 import { CreateColectaDto, UpdateColectaDto } from 'src/dto/colecta.dto';

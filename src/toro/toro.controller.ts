@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Param, Post, Put, Delete, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  Delete,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import { ToroService } from './toro.service';
 import { Toro } from 'src/modelo/toro';
 import { CreateToroDto, UpdateToroDto } from 'src/dto/toro.dto';
@@ -24,7 +34,10 @@ export class ToroController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateToroDto: UpdateToroDto): Promise<Toro | null> {
+  update(
+    @Param('id') id: string,
+    @Body() updateToroDto: UpdateToroDto,
+  ): Promise<Toro | null> {
     return this.toroService.update(id, updateToroDto);
   }
 
