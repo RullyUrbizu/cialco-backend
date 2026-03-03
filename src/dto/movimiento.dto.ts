@@ -55,6 +55,11 @@ export class CreateMovimientoDto {
   @IsString()
   fecha?: string;
 
+  @IsOptional()
+  @IsString()
+  @MaxLength(50, { message: 'El remito no puede exceder 50 caracteres' })
+  remito?: string;
+
   // Distribución por contenedores (opcional, si no se especifica se usa el total)
   @IsOptional()
   @IsArray()

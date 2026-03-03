@@ -35,15 +35,6 @@ export class Colecta extends Model<Colecta> {
   @Column(DataType.INTEGER)
   declare cantidad: number;
 
-  @Column(DataType.INTEGER)
-  declare ingreso: number;
-
-  @Column(DataType.INTEGER)
-  declare sale: number;
-
-  @Column(DataType.INTEGER)
-  declare stock: number;
-
   @BelongsTo(() => Toro)
   declare toro: Toro;
 

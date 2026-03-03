@@ -60,21 +60,6 @@ export class CreateColectaDto {
   @IsInt({ message: 'La cantidad debe ser un número entero' })
   @Min(0, { message: 'La cantidad no puede ser negativa' })
   cantidad?: number;
-
-  @IsOptional()
-  @IsInt({ message: 'El ingreso debe ser un número entero' })
-  @Min(0, { message: 'El ingreso no puede ser negativo' })
-  ingreso?: number;
-
-  @IsOptional()
-  @IsInt({ message: 'La salida debe ser un número entero' })
-  @Min(0, { message: 'La salida no puede ser negativa' })
-  sale?: number;
-
-  @IsOptional()
-  @IsInt({ message: 'El stock debe ser un número entero' })
-  @Min(0, { message: 'El stock no puede ser negativo' })
-  stock?: number;
 }
 
 export class UpdateColectaDto {

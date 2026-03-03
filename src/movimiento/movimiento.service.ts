@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, BadRequestException, NotFoundException } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { Sequelize } from 'sequelize-typescript';
 import { MovimientoRepository } from './movimiento.repository';
@@ -19,29 +19,54 @@ export class MovimientoService {
     private readonly movimientoRepository: MovimientoRepository,
     private readonly inventarioRepository: InventarioRepository,
     private readonly colectaContenedorRepository: ColectaContenedorRepository,
-  ) {}
+  ) { }
 
   async create(createMovimientoDto: CreateMovimientoDto): Promise<Movimiento> {
     const transaction = await this.sequelize.transaction();
     try {
-      // Crear el movimiento
-      const movimiento = await this.movimientoRepository.create(
-        {
-          id: uuidv4(),
-          ...createMovimientoDto,
-          fecha: createMovimientoDto.fecha || new Date().toISOString(),
-        } as any,
-        transaction,
-      );
-
-      // Actualizar el inventario
+      // 1. Obtener el inventario y su colecta para saber el cliente
       const inventario = await this.inventarioRepository.findById(
         createMovimientoDto.inventarioId,
       );
 
       if (!inventario) {
-        throw new Error('Inventario no encontrado');
+        throw new NotFoundException('Inventario no encontrado');
       }
+
+      this.logger.debug(`Inventario cargado: ${inventario.id}, Colecta ID: ${inventario.colectaId}, Colecta cargada: ${!!inventario.colecta}`);
+
+      // El cliente viene de la colecta asociada al inventario
+      const clienteId = inventario.colecta?.clienteId;
+      this.logger.debug(`Cliente ID detectado para el movimiento: ${clienteId}`);
+
+      // 2. Si hay remito, validar que pertenezca al mismo cliente
+      if (createMovimientoDto.remito) {
+        this.logger.debug(`Validando remito: ${createMovimientoDto.remito}`);
+        const movimientosExistentes = await this.movimientoRepository.findByRemito(createMovimientoDto.remito);
+
+        if (movimientosExistentes.length > 0) {
+          // Obtener el cliente del remito existente (del primer movimiento encontrado)
+          const primerMov = movimientosExistentes[0];
+          const clienteRemito = primerMov.clienteId || primerMov.inventario?.colecta?.clienteId;
+          this.logger.debug(`Remito existente encontrado. Cliente asociado: ${clienteRemito}`);
+
+          if (clienteRemito && clienteRemito !== clienteId) {
+            throw new BadRequestException(`El remito ${createMovimientoDto.remito} ya está asociado a otro cliente. No se puede mezclar clientes en un mismo remito.`);
+          }
+        }
+      }
+
+      // 3. Crear el movimiento
+      const movimiento = await this.movimientoRepository.create(
+        {
+          id: uuidv4(),
+          ...createMovimientoDto,
+          clienteId: clienteId || null, // Guardamos explícitamente el cliente
+          fecha: createMovimientoDto.fecha ? new Date(createMovimientoDto.fecha) : new Date(),
+          remito: createMovimientoDto.remito || null,
+        } as Partial<Movimiento> as Movimiento,
+        transaction,
+      );
 
       // Si se especificó distribución por contenedores, actualizar stock de cada uno
       if (
@@ -54,7 +79,7 @@ export class MovimientoService {
           );
 
           if (!contenedor) {
-            throw new Error(`Contenedor ${dist.contenedorId} no encontrado`);
+            throw new NotFoundException(`Contenedor ${dist.contenedorId} no encontrado`);
           }
 
           let nuevoStock = contenedor.stockActual;
@@ -65,7 +90,7 @@ export class MovimientoService {
             nuevoStock -= dist.cantidad;
 
             if (nuevoStock < 0) {
-              throw new Error(
+              throw new BadRequestException(
                 `Stock insuficiente en contenedor. Disponible: ${contenedor.stockActual}, solicitado: ${dist.cantidad}`,
               );
             }

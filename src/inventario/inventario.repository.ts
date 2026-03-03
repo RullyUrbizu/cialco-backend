@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Inventario } from 'src/modelo/inventario';
+import { Colecta } from 'src/modelo/colecta';
 
 @Injectable()
 export class InventarioRepository {
   constructor(
     @InjectModel(Inventario)
     private readonly inventarioModel: typeof Inventario,
-  ) {}
+  ) { }
 
   async create(inventario: Inventario, transaction?: any): Promise<Inventario> {
     return this.inventarioModel.create(inventario, { transaction });
@@ -18,7 +19,9 @@ export class InventarioRepository {
   }
 
   async findById(id: string): Promise<Inventario | null> {
-    return this.inventarioModel.findByPk(id);
+    return this.inventarioModel.findByPk(id, {
+      include: [Colecta],
+    });
   }
 
   async findByColectaId(colectaId: string): Promise<Inventario | null> {

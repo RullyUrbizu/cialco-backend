@@ -4,6 +4,7 @@ import {
   Table,
   DataType,
   ForeignKey,
+  BelongsTo,
 } from 'sequelize-typescript';
 import { Inventario } from './inventario';
 import { Cliente } from './cliente';
@@ -42,4 +43,11 @@ export class Movimiento extends Model<Movimiento> {
 
   @Column({ type: DataType.TEXT, allowNull: true })
   declare notas: string | null;
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  declare remito: string | null;
+  @BelongsTo(() => Inventario)
+  declare inventario: Inventario;
+  @BelongsTo(() => Cliente)
+  declare cliente: Cliente;
 }

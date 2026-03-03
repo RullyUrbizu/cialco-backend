@@ -58,8 +58,7 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 # Excel files and data imports
 *.xlsx
 *.xls
-*.sql
-!init-scripts/
-!init-scripts/*.sql
+# Scripts de base de datos
+init-scripts/
 excel_to_sql_generator.py
 excel_analysis.txt

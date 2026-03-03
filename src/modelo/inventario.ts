@@ -4,6 +4,7 @@ import {
   Table,
   DataType,
   ForeignKey,
+  BelongsTo,
 } from 'sequelize-typescript';
 import { Colecta } from './colecta';
 
@@ -35,4 +36,7 @@ export class Inventario extends Model<Inventario> {
     field: 'stock_actual',
   })
   declare stockActual: number;
+
+  @BelongsTo(() => Colecta)
+  declare colecta: Colecta;
 }
