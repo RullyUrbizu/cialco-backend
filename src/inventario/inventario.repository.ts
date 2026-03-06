@@ -24,9 +24,13 @@ export class InventarioRepository {
     });
   }
 
-  async findByColectaId(colectaId: string): Promise<Inventario | null> {
+  async findByColectaId(
+    colectaId: string,
+    transaction?: any,
+  ): Promise<Inventario | null> {
     return this.inventarioModel.findOne({
       where: { colectaId },
+      transaction,
     });
   }
 

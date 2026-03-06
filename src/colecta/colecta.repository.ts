@@ -13,10 +13,10 @@ export class ColectaRepository {
   constructor(
     @InjectModel(Colecta)
     private readonly colectaModel: typeof Colecta,
-  ) {}
+  ) { }
 
-  async create(colecta: Colecta): Promise<Colecta> {
-    return this.colectaModel.create(colecta);
+  async create(colecta: Colecta, transaction?: any): Promise<Colecta> {
+    return this.colectaModel.create(colecta, { transaction });
   }
 
   async findAll(): Promise<Colecta[]> {
@@ -76,7 +76,7 @@ export class ColectaRepository {
     });
   }
 
-  async findById(id: string): Promise<Colecta | null> {
+  async findById(id: string, transaction?: any): Promise<Colecta | null> {
     return this.colectaModel.findByPk(id, {
       include: [
         { model: Toro },
@@ -88,13 +88,18 @@ export class ColectaRepository {
         },
         { model: Inventario },
       ],
+      transaction,
     });
   }
 
-  async update(id: string, updates: Partial<Colecta>): Promise<Colecta | null> {
-    const colecta = await this.colectaModel.findByPk(id);
+  async update(
+    id: string,
+    updates: Partial<Colecta>,
+    transaction?: any,
+  ): Promise<Colecta | null> {
+    const colecta = await this.colectaModel.findByPk(id, { transaction });
     if (!colecta) return null;
-    return colecta.update(updates);
+    return colecta.update(updates, { transaction });
   }
 
   async delete(id: string): Promise<boolean> {

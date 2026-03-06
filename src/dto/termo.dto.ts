@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsBoolean } from 'class-validator';
 
 export class CreateTermoDto {
   @IsString()
@@ -8,5 +8,10 @@ export class CreateTermoDto {
 
 export class UpdateTermoDto {
   @IsString()
+  @IsOptional()
   codigo?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  activo?: boolean;
 }

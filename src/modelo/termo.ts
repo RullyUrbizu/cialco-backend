@@ -12,6 +12,9 @@ export class Termo extends Model<Termo> {
   @Column(DataType.STRING)
   declare codigo: string;
 
+  @Column({ type: DataType.BOOLEAN, defaultValue: true })
+  declare activo: boolean;
+
   @HasMany(() => ColectaContenedor)
   declare contenedores: ColectaContenedor[];
 }

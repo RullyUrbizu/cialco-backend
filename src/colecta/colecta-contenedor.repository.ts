@@ -9,7 +9,7 @@ export class ColectaContenedorRepository {
   constructor(
     @InjectModel(ColectaContenedor)
     private readonly colectaContenedorModel: typeof ColectaContenedor,
-  ) {}
+  ) { }
 
   async create(
     contenedor: ColectaContenedor,
@@ -18,22 +18,37 @@ export class ColectaContenedorRepository {
     return this.colectaContenedorModel.create(contenedor, { transaction });
   }
 
-  async findByColectaId(colectaId: string): Promise<ColectaContenedor[]> {
+  async findByColectaId(
+    colectaId: string,
+    transaction?: any,
+  ): Promise<ColectaContenedor[]> {
     return this.colectaContenedorModel.findAll({
       where: { colectaId },
       include: [{ model: Termo }, { model: Canastillo }],
+      transaction,
     });
   }
 
-  async findById(id: string): Promise<ColectaContenedor | null> {
+  async findById(
+    id: string,
+    transaction?: any,
+  ): Promise<ColectaContenedor | null> {
     return this.colectaContenedorModel.findByPk(id, {
       include: [{ model: Termo }, { model: Canastillo }],
+      transaction,
     });
   }
 
   async deleteByColectaId(colectaId: string): Promise<number> {
     return this.colectaContenedorModel.destroy({
       where: { colectaId },
+    });
+  }
+
+  async delete(id: string, transaction?: any): Promise<number> {
+    return this.colectaContenedorModel.destroy({
+      where: { id },
+      transaction,
     });
   }
 

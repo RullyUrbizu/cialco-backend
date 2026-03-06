@@ -12,10 +12,11 @@ import {
 import { ColectaService } from './colecta.service';
 import { Colecta } from 'src/modelo/colecta';
 import { CreateColectaDto, UpdateColectaDto } from 'src/dto/colecta.dto';
+import { TransferenciaStockDto } from 'src/dto/transferencia-stock.dto';
 
 @Controller('colectas')
 export class ColectaController {
-  constructor(private readonly colectaService: ColectaService) {}
+  constructor(private readonly colectaService: ColectaService) { }
 
   /**
    * Crear una nueva colecta
@@ -80,5 +81,11 @@ export class ColectaController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async delete(@Param('id') id: string): Promise<void> {
     await this.colectaService.delete(id);
+  }
+
+  @Post('transferencia')
+  @HttpCode(HttpStatus.OK)
+  async transferirStock(@Body() dto: TransferenciaStockDto): Promise<void> {
+    return this.colectaService.transferirStock(dto);
   }
 }

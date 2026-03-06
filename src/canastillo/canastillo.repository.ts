@@ -7,10 +7,13 @@ export class CanastilloRepository {
   constructor(
     @InjectModel(Canastillo)
     private readonly canastilloModel: typeof Canastillo,
-  ) {}
+  ) { }
 
-  async create(canastillo: Canastillo): Promise<Canastillo> {
-    return this.canastilloModel.create(canastillo);
+  async create(
+    canastillo: Canastillo,
+    transaction?: any,
+  ): Promise<Canastillo> {
+    return this.canastilloModel.create(canastillo, { transaction });
   }
 
   async findAll(): Promise<Canastillo[]> {
@@ -24,8 +27,12 @@ export class CanastilloRepository {
   async findByTermoAndCodigo(
     termoId: string,
     codigo: string,
+    transaction?: any,
   ): Promise<Canastillo | null> {
-    return this.canastilloModel.findOne({ where: { termoId, codigo } });
+    return this.canastilloModel.findOne({
+      where: { termoId, codigo },
+      transaction,
+    });
   }
 
   async update(
