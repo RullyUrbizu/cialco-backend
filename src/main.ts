@@ -33,11 +33,13 @@ async function bootstrap() {
 
       if (
         !origin ||
+        allowedOrigins.includes('*') ||
         allowedOrigins.includes(origin) ||
         localIpRegex.test(origin)
       ) {
         callback(null, true);
       } else {
+        console.warn(`CORS blocked for origin: ${origin}. Allowed: ${allowedOrigins}`);
         callback(new Error('Not allowed by CORS'));
       }
     },
