@@ -35,6 +35,9 @@ export class Colecta extends Model<Colecta> {
   @Column(DataType.INTEGER)
   declare cantidad: number;
 
+  @Column(DataType.STRING)
+  declare color: string;
+
   @BelongsTo(() => Toro)
   declare toro: Toro;
 

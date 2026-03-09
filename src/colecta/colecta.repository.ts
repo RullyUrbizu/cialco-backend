@@ -29,6 +29,7 @@ export class ColectaRepository {
           as: 'contenedores',
           include: [{ model: Termo }, { model: Canastillo }],
         },
+        { model: Inventario },
       ],
       raw: false,
     });
