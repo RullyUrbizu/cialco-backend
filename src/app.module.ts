@@ -31,6 +31,15 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         define: {
           underscored: true,
         },
+        dialectOptions:
+          configService.get<string>('NODE_ENV') === 'production'
+            ? {
+              ssl: {
+                require: true,
+                rejectUnauthorized: false,
+              },
+            }
+            : {},
       }),
     }),
     ColectaModule,
@@ -44,4 +53,4 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }
