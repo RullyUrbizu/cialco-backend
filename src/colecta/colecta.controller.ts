@@ -8,6 +8,7 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 import { ColectaService } from './colecta.service';
 import { Colecta } from 'src/modelo/colecta';
@@ -27,12 +28,17 @@ export class ColectaController {
     return this.colectaService.create(createColectaDto);
   }
 
+
   /**
-   * Obtener todas las colectas
+   * Obtener todas las colectas (paginado)
    */
   @Get()
-  async findAll(): Promise<Colecta[]> {
-    return this.colectaService.findAll();
+  async findAll(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 20,
+    @Query('search') search?: string,
+  ): Promise<{ data: Colecta[]; total: number; page: number; lastPage: number }> {
+    return this.colectaService.findAll(Number(page), Number(limit), search);
   }
 
   /**
