@@ -1,0 +1,26 @@
+name: Backend Tests
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+on:
+  push:
+    branches: [ main, test ]
+  pull_request:
+    branches: [ main, test ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22 # Usamos 22 (LTS) o 24 según sugerencia de GH
+
+      - run: npm install
+
+      - run: npm run test

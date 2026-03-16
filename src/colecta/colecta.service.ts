@@ -102,8 +102,22 @@ export class ColectaService {
     return colectaCompleta;
   }
 
-  async findAll(): Promise<Colecta[]> {
-    return this.colectaRepository.findAll();
+  async findAll(
+    page: number = 1,
+    limit: number = 20,
+    search?: string,
+  ): Promise<{ data: Colecta[]; total: number; page: number; lastPage: number }> {
+    const { rows, count } = await this.colectaRepository.findAllPaginated(
+      page,
+      limit,
+      search,
+    );
+    return {
+      data: rows,
+      total: count,
+      page,
+      lastPage: Math.ceil(count / limit),
+    };
   }
 
   async findAllWithCliente(razonSocial: string): Promise<Colecta[]> {
