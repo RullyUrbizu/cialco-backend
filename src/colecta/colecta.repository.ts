@@ -47,7 +47,7 @@ export class ColectaRepository {
       offset,
       order: [['fecha', 'DESC']],
       subQuery: false, // Evita la subquery anidada que rompe los WHERE sobre columnas de tablas relacionadas
-      attributes: ['id', 'fecha', 'cantidad', 'color'],
+      attributes: ['id', 'fecha', 'cantidad', 'color', 'vigorMot'],
       include: [
         { 
           model: Toro, 
@@ -158,7 +158,8 @@ export class ColectaRepository {
   ): Promise<Colecta | null> {
     const colecta = await this.colectaModel.findByPk(id, { transaction });
     if (!colecta) return null;
-    return colecta.update(updates, { transaction });
+    await colecta.update(updates, { transaction });
+    return this.findById(id, transaction);
   }
 
   async delete(id: string): Promise<boolean> {
