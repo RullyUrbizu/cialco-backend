@@ -2,8 +2,15 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 import { AiService } from './ai.service';
 import { AiDataService } from './ai.data.service';
-import { anonimizar, ejecutarHerramienta } from './ai.tools';
+import {
+  anonimizar,
+  ejecutarHerramienta,
+  TOOL_META,
+  AI_TOOLS,
+  ToolName,
+} from './ai.tools';
 import { ManualSeccion, obtenerManual } from './manual-de-uso';
+import { ConflictException } from '@nestjs/common';
 
 describe('AiService', () => {
   let service: AiService;
@@ -21,6 +28,9 @@ describe('AiService', () => {
     listarClientes: jest.fn(),
     razonSocialPorIds: jest.fn(),
     resumenGlobal: jest.fn(),
+    crearToro: jest.fn(),
+    crearCliente: jest.fn(),
+    crearTermo: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -781,6 +791,137 @@ describe('AiService', () => {
         true,
       );
       expect(resultado).toHaveProperty('error');
+    });
+
+    it('crear_toro crea un toro con datos válidos', async () => {
+      mockDataService.crearToro.mockResolvedValue({
+        id: 't-1',
+        nombre: 'Indomable',
+        raza: 'AA',
+      });
+
+      const resultado = await ejecutarHerramienta(
+        'crear_toro',
+        { nombre: 'Indomable', raza: 'AA' },
+        mockDataService as unknown as AiDataService,
+        false,
+      );
+
+      expect(mockDataService.crearToro).toHaveBeenCalledWith('Indomable', 'AA');
+      expect(resultado).toEqual({ id: 't-1', nombre: 'Indomable', raza: 'AA' });
+    });
+
+    it('crear_cliente crea un cliente con razón social y opcionalmente CUIT', async () => {
+      mockDataService.crearCliente.mockResolvedValue({
+        id: 'c-1',
+        razonSocial: 'Ganadera SRL',
+        cuit: '20-12345678-9',
+      });
+
+      const resultado = await ejecutarHerramienta(
+        'crear_cliente',
+        { razonSocial: 'Ganadera SRL', cuit: '20-12345678-9' },
+        mockDataService as unknown as AiDataService,
+        false,
+      );
+
+      expect(mockDataService.crearCliente).toHaveBeenCalledWith(
+        'Ganadera SRL',
+        '20-12345678-9',
+      );
+      expect(resultado).toEqual({
+        id: 'c-1',
+        razonSocial: 'Ganadera SRL',
+        cuit: '20-12345678-9',
+      });
+    });
+
+    it('crear_cliente sin CUIT pasa undefined', async () => {
+      mockDataService.crearCliente.mockResolvedValue({
+        id: 'c-2',
+        razonSocial: 'Sin CUIT',
+        cuit: undefined,
+      });
+
+      await ejecutarHerramienta(
+        'crear_cliente',
+        { razonSocial: 'Sin CUIT' },
+        mockDataService as unknown as AiDataService,
+        false,
+      );
+
+      expect(mockDataService.crearCliente).toHaveBeenCalledWith(
+        'Sin CUIT',
+        undefined,
+      );
+    });
+
+    it('crear_cliente con CUIT duplicado propaga ConflictException', async () => {
+      mockDataService.crearCliente.mockRejectedValue(
+        new ConflictException('El CUIT ya existe en la base de datos'),
+      );
+
+      await expect(
+        ejecutarHerramienta(
+          'crear_cliente',
+          { razonSocial: 'Dup', cuit: '20-12345678-9' },
+          mockDataService as unknown as AiDataService,
+          false,
+        ),
+      ).rejects.toThrow(ConflictException);
+    });
+
+    it('crear_termo crea un termo con código válido', async () => {
+      mockDataService.crearTermo.mockResolvedValue({
+        id: 'te-1',
+        codigo: 'CH I',
+        activo: true,
+      });
+
+      const resultado = await ejecutarHerramienta(
+        'crear_termo',
+        { codigo: 'CH I' },
+        mockDataService as unknown as AiDataService,
+        false,
+      );
+
+      expect(mockDataService.crearTermo).toHaveBeenCalledWith('CH I');
+      expect(resultado).toEqual({
+        id: 'te-1',
+        codigo: 'CH I',
+        activo: true,
+      });
+    });
+
+    it('TOOL_META cubre todas las tools declaradas en AI_TOOLS', () => {
+      const toolNames = AI_TOOLS[0].functionDeclarations.map((t) => t.name);
+      for (const name of toolNames) {
+        expect(TOOL_META[name as ToolName]).toBeDefined();
+      }
+      expect(Object.keys(TOOL_META)).toEqual(expect.arrayContaining(toolNames));
+    });
+
+    it('tools de lectura tienen permission read', () => {
+      const readTools = [
+        'listar_toros',
+        'stock_por_toro',
+        'listar_colectas',
+        'ocupacion_termos',
+        'listar_movimientos',
+        'listar_clientes',
+        'resumen_global',
+        'manual_de_uso',
+      ];
+      for (const name of readTools) {
+        expect(TOOL_META[name as ToolName].permission).toBe('read');
+      }
+    });
+
+    it('tools de escritura tienen permission write', () => {
+      const writeTools = ['crear_toro', 'crear_cliente', 'crear_termo'];
+      for (const name of writeTools) {
+        expect(TOOL_META[name as ToolName].permission).toBe('write');
+      }
     });
   });
 

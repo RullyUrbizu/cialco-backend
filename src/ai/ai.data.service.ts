@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ConflictException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { Op, WhereOptions } from 'sequelize';
+import { Op, WhereOptions, fn, col } from 'sequelize';
+import { v4 as uuidv4 } from 'uuid';
 import { Toro } from 'src/modelo/toro';
 import { Colecta } from 'src/modelo/colecta';
 import { Inventario } from 'src/modelo/inventario';
@@ -339,19 +340,21 @@ export class AiDataService {
       totalToros,
       totalClientes,
       totalColectas,
-      inventarios,
+      stockResult,
       totalMovimientos,
     ] = await Promise.all([
       this.toroModel.count(),
       this.clienteModel.count(),
       this.colectaModel.count(),
-      this.inventarioModel.findAll({ attributes: ['stockActual'] }),
+      this.inventarioModel.findOne({
+        attributes: [
+          [fn('COALESCE', fn('SUM', col('stockActual')), 0), 'total'],
+        ],
+        plain: true,
+      }),
       this.movimientoModel.count(),
     ]);
-    const totalStock = inventarios.reduce(
-      (sum, i) => sum + (i.stockActual ?? 0),
-      0,
-    );
+    const totalStock = Number(stockResult?.get('total') ?? 0);
     return {
       totalToros,
       totalClientes,
@@ -359,6 +362,43 @@ export class AiDataService {
       totalStockPajuelas: totalStock,
       totalMovimientos,
     };
+  }
+
+  async crearToro(nombre: string, raza: string) {
+    const toro = await this.toroModel.create({
+      id: uuidv4(),
+      nombre,
+      raza,
+    } as Partial<Toro> as Toro);
+    return { id: toro.id, nombre: toro.nombre, raza: toro.raza };
+  }
+
+  async crearCliente(razonSocial: string, cuit?: string) {
+    try {
+      const cliente = await this.clienteModel.create({
+        id: uuidv4(),
+        razonSocial,
+        ...(cuit ? { cuit } : {}),
+      } as Partial<Cliente> as Cliente);
+      return {
+        id: cliente.id,
+        razonSocial: cliente.razonSocial,
+        cuit: cliente.cuit,
+      };
+    } catch (error) {
+      if (error.parent && error.parent.code === '23505') {
+        throw new ConflictException('El CUIT ya existe en la base de datos');
+      }
+      throw error;
+    }
+  }
+
+  async crearTermo(codigo: string) {
+    const termo = await this.termoModel.create({
+      id: uuidv4(),
+      codigo,
+    } as Partial<Termo> as Termo);
+    return { id: termo.id, codigo: termo.codigo, activo: termo.activo };
   }
 
   private formatearFecha(

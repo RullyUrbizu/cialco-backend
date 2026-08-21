@@ -95,6 +95,41 @@ export const AI_TOOLS = [
           },
         },
       },
+      {
+        name: 'crear_toro',
+        description:
+          'Crea un nuevo toro en el sistema. Requiere nombre y raza (AA, AAC, AAN, PH, SH, LMAn).',
+        parameters: {
+          type: 'OBJECT',
+          properties: {
+            nombre: STRING_PARAM,
+            raza: STRING_PARAM,
+          },
+        },
+      },
+      {
+        name: 'crear_cliente',
+        description:
+          'Crea un nuevo cliente en el sistema. Requiere razón social. Opcional: CUIT (formato XX-XXXXXXXX-X).',
+        parameters: {
+          type: 'OBJECT',
+          properties: {
+            razonSocial: STRING_PARAM,
+            cuit: STRING_PARAM,
+          },
+        },
+      },
+      {
+        name: 'crear_termo',
+        description:
+          'Crea un nuevo termo en el sistema. Requiere código único.',
+        parameters: {
+          type: 'OBJECT',
+          properties: {
+            codigo: STRING_PARAM,
+          },
+        },
+      },
     ],
   },
 ];
@@ -107,7 +142,10 @@ export type ToolName =
   | 'listar_movimientos'
   | 'listar_clientes'
   | 'resumen_global'
-  | 'manual_de_uso';
+  | 'manual_de_uso'
+  | 'crear_toro'
+  | 'crear_cliente'
+  | 'crear_termo';
 
 export interface HerramientaArgs {
   nombre?: string;
@@ -121,7 +159,28 @@ export interface HerramientaArgs {
   busqueda?: string;
   seccion?: string;
   limit?: number;
+  razonSocial?: string;
+  cuit?: string;
+  codigo?: string;
 }
+
+interface ToolMeta {
+  permission: 'read' | 'write';
+}
+
+export const TOOL_META: Record<ToolName, ToolMeta> = {
+  listar_toros: { permission: 'read' },
+  stock_por_toro: { permission: 'read' },
+  listar_colectas: { permission: 'read' },
+  ocupacion_termos: { permission: 'read' },
+  listar_movimientos: { permission: 'read' },
+  listar_clientes: { permission: 'read' },
+  resumen_global: { permission: 'read' },
+  manual_de_uso: { permission: 'read' },
+  crear_toro: { permission: 'write' },
+  crear_cliente: { permission: 'write' },
+  crear_termo: { permission: 'write' },
+};
 
 export async function ejecutarHerramienta(
   name: string,
@@ -174,6 +233,12 @@ export async function ejecutarHerramienta(
       return await dataService.resumenGlobal();
     case 'manual_de_uso':
       return obtenerManual(args?.seccion);
+    case 'crear_toro':
+      return await dataService.crearToro(args.nombre!, args.raza!);
+    case 'crear_cliente':
+      return await dataService.crearCliente(args.razonSocial!, args.cuit);
+    case 'crear_termo':
+      return await dataService.crearTermo(args.codigo!);
     default:
       return { error: `Herramienta desconocida: ${name}` };
   }

@@ -194,15 +194,19 @@ export const MANUAL_DE_USO: ManualSeccion[] = [
   },
 ];
 
+const cache = new Map<string, ManualSeccion[]>();
+
 export function obtenerManual(seccion?: string): ManualSeccion[] {
-  if (!seccion || !seccion.trim()) {
-    return MANUAL_DE_USO;
-  }
-  const termino = seccion.toLowerCase().trim();
-  return MANUAL_DE_USO.filter(
-    (s) =>
-      s.seccion.toLowerCase().includes(termino) ||
-      s.descripcion.toLowerCase().includes(termino) ||
-      s.acciones.some((a) => a.nombre.toLowerCase().includes(termino)),
-  );
+  const key = seccion?.toLowerCase().trim() ?? '';
+  if (cache.has(key)) return cache.get(key)!;
+  const resultado = key
+    ? MANUAL_DE_USO.filter(
+        (s) =>
+          s.seccion.toLowerCase().includes(key) ||
+          s.descripcion.toLowerCase().includes(key) ||
+          s.acciones.some((a) => a.nombre.toLowerCase().includes(key)),
+      )
+    : MANUAL_DE_USO;
+  cache.set(key, resultado);
+  return resultado;
 }
