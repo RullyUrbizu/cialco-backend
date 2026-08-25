@@ -129,6 +129,7 @@ export class AiDataService {
     hasta?: string,
     limit = 20,
   ) {
+    const safeLimit = Math.min(Math.max(Number(limit) || 20, 1), 100);
     const where: WhereOptions = {};
     if (toroNombre) where['$toro.nombre$'] = { [Op.iLike]: `%${toroNombre}%` };
     if (clienteRazonSocial) {
@@ -145,7 +146,7 @@ export class AiDataService {
 
     const colectas = await this.colectaModel.findAll({
       where,
-      limit,
+      limit: safeLimit,
       order: [['fecha', 'DESC']],
       subQuery: false,
       include: [
@@ -240,6 +241,7 @@ export class AiDataService {
     remito?: string,
     limit = 30,
   ) {
+    const safeLimit = Math.min(Math.max(Number(limit) || 30, 1), 100);
     const where: WhereOptions = {};
     if (tipo && ['ingreso', 'salida'].includes(tipo)) where.tipo = tipo;
     if (clienteRazonSocial) {
@@ -259,7 +261,7 @@ export class AiDataService {
 
     const movimientos = await this.movimientoModel.findAll({
       where,
-      limit,
+      limit: safeLimit,
       order: [['fecha', 'DESC']],
       subQuery: false,
       include: [
@@ -365,12 +367,19 @@ export class AiDataService {
   }
 
   async crearToro(nombre: string, raza: string) {
-    const toro = await this.toroModel.create({
-      id: uuidv4(),
-      nombre,
-      raza,
-    } as Partial<Toro> as Toro);
-    return { id: toro.id, nombre: toro.nombre, raza: toro.raza };
+    try {
+      const toro = await this.toroModel.create({
+        id: uuidv4(),
+        nombre,
+        raza,
+      } as Partial<Toro> as Toro);
+      return { id: toro.id, nombre: toro.nombre, raza: toro.raza };
+    } catch (error) {
+      if (error.parent && error.parent.code === '23505') {
+        throw new ConflictException('Ya existe un toro con ese nombre');
+      }
+      throw error;
+    }
   }
 
   async crearCliente(razonSocial: string, cuit?: string) {
@@ -394,11 +403,18 @@ export class AiDataService {
   }
 
   async crearTermo(codigo: string) {
-    const termo = await this.termoModel.create({
-      id: uuidv4(),
-      codigo,
-    } as Partial<Termo> as Termo);
-    return { id: termo.id, codigo: termo.codigo, activo: termo.activo };
+    try {
+      const termo = await this.termoModel.create({
+        id: uuidv4(),
+        codigo,
+      } as Partial<Termo> as Termo);
+      return { id: termo.id, codigo: termo.codigo, activo: termo.activo };
+    } catch (error) {
+      if (error.parent && error.parent.code === '23505') {
+        throw new ConflictException('Ya existe un termo con ese código');
+      }
+      throw error;
+    }
   }
 
   private formatearFecha(
