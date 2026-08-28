@@ -29,8 +29,8 @@ async function bootstrap() {
   app.enableCors({
     origin: (origin: any, callback: any) => {
       // Regex para permitir cualquier IP de la red local 192.168.1.x
-      const localIpRegex = /^http:\/\/192\.168\.1\.\d{1,3}(:\d+)?$/;
-
+      // const localIpRegex = /^http:\/\/192\.168\.1\.\d{1,3}(:\d+)?$/;
+      const localIpRegex = /^http:\/\/192\.168\.\d{1,3}\.\d{1,3}(:\d+)?$/;
       if (
         !origin ||
         allowedOrigins.includes('*') ||

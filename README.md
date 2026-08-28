@@ -46,6 +46,13 @@ NODE_ENV=development
 
 # CORS
 CORS_ORIGIN=http://localhost:5173
+
+# Asistente de IA (Gemini)
+AI_API_KEY=tu_api_key_de_gemini
+AI_API_KEYS=clave1,clave2    # Opcional: varias claves se rotan automáticamente
+AI_MODEL=gemini-3.6-flash
+AI_MODELS=                    # Opcional: cadena de fallback
+AI_ANONYMIZE=true             # true: anonimiza datos sensibles antes de enviar a Gemini
 ```
 
 ### 3. Configurar la base de datos
@@ -113,16 +120,18 @@ npm run test:cov
 
 ```
 src/
-├── auth/           # Módulo de autenticación
-├── users/          # Gestión de usuarios
-├── clientes/       # Gestión de clientes
-├── movimientos/    # Gestión de movimientos de stock
-├── colectas/       # Gestión de colectas
-├── canastillos/    # Gestión de canastillos
-├── toros/          # Gestión de toros
-├── common/         # Utilidades y decoradores comunes
-├── config/         # Configuración de la aplicación
-└── main.ts         # Punto de entrada
+├── ai/              # Asistente de IA (Gemini + tool calling)
+├── canastillo/       # Gestión de canastillos
+├── cliente/          # Gestión de clientes
+├── colecta/          # Gestión de colectas
+├── dto/              # Data Transfer Objects (validación)
+├── inventario/       # Gestión de inventario
+├── modelo/           # Modelos de Sequelize (entidades)
+├── movimiento/       # Gestión de movimientos de stock
+├── termo/            # Gestión de termos
+├── toro/             # Gestión de toros
+├── app.module.ts     # Módulo raíz de NestJS
+└── main.ts           # Punto de entrada
 ```
 
 ## Endpoints principales
@@ -147,6 +156,9 @@ src/
 - `POST /colectas` - Crear colecta
 - `PUT /colectas/:id` - Actualizar colecta
 - `DELETE /colectas/:id` - Eliminar colecta
+
+### Asistente de IA
+- `POST /ai/chat` - Consulta al asistente (recibe `{ messages: [{ role, content }] }`)
 
 ## Documentación de la API
 
