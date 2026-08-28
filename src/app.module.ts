@@ -10,6 +10,7 @@ import { ClienteModule } from './cliente/cliente.module';
 import { InventarioModule } from './inventario/inventario.module';
 import { MovimientoModule } from './movimiento/movimiento.module';
 import { AiModule } from './ai/ai.module';
+import { HealthController } from './health/health.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
@@ -52,7 +53,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     MovimientoModule,
     AiModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, HealthController],
   providers: [AppService],
 })
 export class AppModule { }
