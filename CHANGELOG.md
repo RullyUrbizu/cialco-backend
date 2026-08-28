@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/InakiUrbizu/cialco-backend-privado/compare/v1.1.0...v1.2.0) (2026-08-28)
+
+
+### Features
+
+* agrego endpoint de health check para monitoreo de uptime ([da83864](https://github.com/InakiUrbizu/cialco-backend-privado/commit/da8386482138eea30297c8c954ccdb7c2f43a48b))
+
 ## [1.1.0](https://github.com/InakiUrbizu/cialco-backend-privado/compare/v1.0.0...v1.1.0) (2026-08-27)
 
 
