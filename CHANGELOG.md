@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.1.0](https://github.com/InakiUrbizu/cialco-backend-privado/compare/v1.0.0...v1.1.0) (2026-08-27)
+
+
+### Features
+
+* **backend-ai:** sanitize limits, validate input length, and handle unique constraint errors ([60bfc82](https://github.com/InakiUrbizu/cialco-backend-privado/commit/60bfc82b4268e7f6b8ad496b848f23ba4dacdb70))
+* implementar backend del asistente de chat con IA ([eb258c3](https://github.com/InakiUrbizu/cialco-backend-privado/commit/eb258c3aaed14b4e67c2093776549d999e888d81))
+* streaming SSE + optimizaciones de rendimiento ([351e549](https://github.com/InakiUrbizu/cialco-backend-privado/commit/351e549e5b9292fb9860242959db74fd7aaa0011))
+
 ## 1.0.0 (2026-03-16)
 
 
